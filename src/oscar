@@ -1,0 +1,303 @@
+#!/usr/bin/env python3
+# Open Shortcut Configurable Action Runner (O.S.C.A.R.)
+
+import os
+import sys
+import subprocess
+import signal
+import threading
+import json
+
+import gi
+gi.require_version('Gtk', '4.0')
+from gi.repository import Gtk, Gdk
+
+arguments = sys.argv[1:]
+
+#
+# CONFIGURATION FOLDER PATH
+# by default in .config/oscar
+# can be overwrited by OSCAR_CONFIG_PATH
+#
+configFolderPath = os.getenv('HOME')+'/.config/oscar/'
+if os.getenv('OSCAR_CONFIG_PATH') is not None:
+    configFolderPath = os.getenv('OSCAR_CONFIG_PATH')
+
+
+#
+# GET THE LAUNCHER JSON
+#
+name = 'default'
+if len(arguments) > 0:
+    name = arguments[0]
+
+
+#
+# DEFINE SOME VARIABLES
+#
+app_title = 'oscar'
+header_title = None
+theme = 'default'
+timeout = 0
+width = 300
+height = 0
+has_theme = True
+orientation=Gtk.Orientation.VERTICAL
+oscar_full_path = os.path.abspath(__file__)
+
+#
+# LOAD CONFIGURATION
+#
+configPath = configFolderPath + name+'.json'
+if not os.path.exists(configPath):
+    name = 'default'
+    configPath = configFolderPath + name+'.json'
+
+    if not os.path.exists(configPath):
+        print('Config file not found @', configPath)
+        sys.exit(1)
+
+config = json.load(open(configPath))
+
+#
+# LOAD THEME
+#
+if 'theme' in config:
+    theme = config['theme']
+cssPath = configFolderPath+'/themes/'+theme+'/style.css'
+
+if not os.path.exists(cssPath):
+    print('Theme not found @', cssPath)
+    has_theme = False
+
+#
+# Set variable based on config
+#
+if 'application_title' in config:
+    app_title = config['application_title']
+
+if 'title' in config:
+    header_title = config['title']
+
+if 'timeout' in config:
+    timeout = config['timeout']
+
+if 'width' in config:
+    width = config['width']
+
+if 'height' in config:
+    height = config['height']
+
+if 'orientation' in config and config['orientation'] == 'horizontal':
+    orientation = Gtk.Orientation.HORIZONTAL
+
+
+#
+# Loading list of items
+#
+items = config['items']
+if len(items) == 0:
+    print('No items found')
+    sys.exit(1)
+
+
+
+#
+# Creating App
+#
+app = Gtk.Application(application_id='be.dim-dim.oscar.'+name)
+win = None  
+timeouts = []
+
+class ThreadJob(threading.Thread):
+    def __init__(self,callback,event,interval):
+        '''runs the callback function after interval seconds
+
+        :param callback:  callback function to invoke
+        :param event: external event for controlling the update operation
+        :param interval: time in seconds after which are required to fire the callback
+        :type callback: function
+        :type interval: int
+        '''
+        self.callback = callback
+        self.event = event
+        self.interval = interval
+        super(ThreadJob,self).__init__()
+
+    def run(self):
+        while not self.event.wait(self.interval):
+            self.callback()
+
+def set_interval(func, sec):
+    event = threading.Event()
+    t = ThreadJob(func,event,sec)
+    t.start()
+    timeouts.append(t)
+
+def force_quit():
+    for t in timeouts:
+        t.event.set()
+
+    if win is not None:
+        win.close()
+    app.quit()
+    sys.exit(0)
+   
+def create_header():
+    header = Gtk.Label(label=header_title)
+    header.add_css_class('header')
+    return header
+
+def get_command(action):
+    command = []
+    if 'command' in action:
+        command = action['command']
+
+    if isinstance(command, str):
+        command = command.split(' ')
+
+    command = [c.replace('OSCAR', oscar_full_path) for c in command]
+    return command
+
+def create_button(action):
+    title = ''
+
+    if 'shortcut' in action:
+        title += '['+action['shortcut']+'] '
+    
+    title += action['label']
+
+    command = get_command(action)
+    btn = Gtk.Button(label=title)
+    btn.add_css_class('button')
+
+    def trigger_action(a):
+        if len(command) > 0:
+            subprocess.Popen(command)
+        force_quit()
+
+    btn.connect('clicked', trigger_action)
+    return btn
+
+def create_output(action):
+    title = action['label']
+    command = []
+    if 'command' in action:
+        command = action['command']
+    
+    item = Gtk.Label(label=title)
+    item.add_css_class('output')
+    
+    interval = 0
+    if 'interval' in action:
+        interval = action['interval']
+
+    def trigger_action():
+        output = subprocess.check_output(command, shell=True).decode('utf-8')
+        
+        # remove last new line
+        output = output.rstrip()
+        item.set_label(output)
+
+    if interval > 0:
+        set_interval(trigger_action, interval)
+    
+    trigger_action()
+
+    return item
+
+def on_key_press(keyval, keycode, state, user_data, win):
+    print('key pressed: ',keycode)
+    
+    if keycode == 65307:
+        force_quit()
+
+    for item in items:
+        if 'shortcut' in item:
+            o = ord(item['shortcut'])
+            print('o', o)
+            if o == keycode:
+                command = get_command(item)
+                if len(command) > 0:
+                    subprocess.Popen(command)
+                force_quit()
+
+
+
+
+def on_activate(app):
+    global win
+    win = Gtk.ApplicationWindow(application=app, title=app_title)
+    win.set_default_size(width, height)
+    win.add_css_class('window_'+name)
+    win.add_css_class('window')
+
+     # new part
+    keycont = Gtk.EventControllerKey()
+    keycont.connect('key-pressed', on_key_press, win)
+    win.add_controller(keycont)
+
+    win.connect('destroy', app.quit)
+
+    win.set_decorated(False)
+    win.set_resizable(False)
+    win.add_css_class('window')
+
+    box = Gtk.Box()
+    box.set_orientation(orientation)
+    box.add_css_class('box')
+
+    if header_title is not None:
+        header = create_header()
+        header.add_controller(keycont)
+        box.append(header)
+
+    
+    # add buttons for each action
+    for item in items:
+        if 'disabled' in item and item['disabled'] == True:
+            continue
+
+        if 'type' in item and item['type'] == 'output':
+            _item = create_output(item)
+        else:
+            _item = create_button(item)
+
+        if _item is not None:
+            _item.add_controller(keycont)
+            _item.add_css_class('item')
+            if 'class_name' in item:
+                _item.add_css_class(item['class_name'])
+            box.append(_item)
+    
+
+    win.set_child(box)
+
+
+    if has_theme:
+        # Apply the CSS to the default screen
+        cssProvider = Gtk.CssProvider()
+        cssProvider.load_from_path(cssPath)
+        Gtk.StyleContext.add_provider_for_display(
+            Gdk.Display.get_default(),
+            cssProvider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+    
+    if timeout > 0:
+        signal.alarm(timeout)
+
+    
+    win.present()
+
+    
+
+app.connect('activate', on_activate)
+
+app.run(None)
+
+def on_timeout(a,b):
+    force_quit()
+
+if timeout > 0:
+    signal.signal(signal.SIGALRM, on_timeout)

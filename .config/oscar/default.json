@@ -1,0 +1,38 @@
+{
+    "width": 400,
+    "items": [
+        {
+            "label": "clock",
+            "type": "output",
+            "class_name": "clock",
+            "interval": 1,
+            "command": "echo $(date '+%H:%M:%S')"
+        },
+        {
+            "label": "Terminal",
+            "shortcut": "t",
+            "command": "kitty"
+        },
+        {
+            "label": "File Manager",
+            "shortcut": "t",
+            "command": "thunar"
+        },
+        {
+            "label": "Firefox",
+            "shortcut": "f",
+            "class_name": "firefox",
+            "command": "oscar firefox"
+        },
+        {
+            "label": "About",
+            "shortcut": "a",
+            "class_name": "about",
+            "command": "oscar about"
+        },
+        {
+            "label": "Quit",
+            "class_name": "quit"
+        }
+    ]
+}

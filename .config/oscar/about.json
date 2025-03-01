@@ -1,0 +1,26 @@
+{
+    "title": "About",
+    "width": 400,
+    "height": 100,
+    "items": [
+
+        {
+            "label": "oscar",
+            "type": "output",
+            "class_name": "oscar",
+            "shell": true,
+            "command": "echo '|\\---/|\n| o_o |\n \\_^_/'"
+        },
+        {
+            "label": "about",
+            "type": "output",
+            "class_name": "about",
+            "shell": true,
+            "command": "echo '\nOscar is a lightweight, customizable launcher for Linux\nthat offers a fast and minimalist way to execute commands,\nshortcuts, and actions. Built with GTK4, it provides a simple,\nefficient, and modern interface for streamlined productivity.'"
+        },
+        {
+            "label": "Quit",
+            "class_name": "quit"
+        }
+    ]
+}
