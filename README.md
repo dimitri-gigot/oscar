@@ -128,7 +128,7 @@ Group other items together
     "type": "separator",
     "class_name": "separator",
     "items": [],
-    "orientation": "horizontal
+    "orientation": "horizontal"
 }
 ```
 
