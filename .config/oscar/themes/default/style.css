@@ -1,5 +1,6 @@
 :root{
     --background: #30343f;
+    --background2: #373b47;
     --foreground: #d3dae3;
     --quit: #d3dae399;
     --highlight: #4fc872;
@@ -14,6 +15,9 @@
     border: 0;
     border-radius: 0;
     line-height: 1;
+    outline: none;
+    box-shadow: none;
+    border: 0;
 }
 
 *:focus{
@@ -26,7 +30,7 @@
 
 
 .header{
-    padding: 20px 0px;
+    padding: 20px;
     font-size: 20px;
     background: var(--background);
     color: white;
@@ -71,10 +75,40 @@
 }
 
 
+/*
+ * RUNNER
+ */
+.runner_label{
+    color: var(--highlight);
+    padding: 10px;
+    margin: 10px;
+}
+
+.input{
+    background: var(--background2);
+    color: var(--foreground);
+    padding: 10px;
+    border-left: 10px solid var(--highlight-opacity);
+    border-right: 10px solid var(--highlight-opacity);
+    outline: none;
+    border-radius: 5px;
+
+}
+
+.input:focus,
+.input:active{
+    border-left: 10px solid var(--highlight);
+    border-right: 10px solid var(--highlight);  
+}
 
 /*
  * BUTTONS
  */
+.button{
+    border-radius: 5px;
+    margin: 0px 20px;
+}
+
 .button:focus{
     border-left: 10px solid var(--highlight);
     border-right: 10px solid var(--highlight);
@@ -95,18 +129,10 @@
     background: var(--background);
     color: var(--quit);
     font-size: 10px;
-    margin: 10px;
+    margin: 10px 20px;
 }
 .button.quit:focus,
 .button.quit:hover{
     background: var(--background);
     color: var(--highlight);
-}
-
-
-
-
-
-.window_firefox .header{
-    background-image: url(./images/firefox_header.png);
 }

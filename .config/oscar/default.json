@@ -9,6 +9,11 @@
             "command": "echo $(date '+%H:%M:%S')"
         },
         {
+            "label": "Run",
+            "type": "runner",
+            "class_name": "runner"
+        },
+        {
             "label": "Terminal",
             "shortcut": "t",
             "command": "kitty"

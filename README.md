@@ -46,7 +46,7 @@ Create a new configuration file `:name.json` into `~/.config/oscar`.
 - **theme** (optional) : Choose a theme for the window, (default: `default`)
 - **orientation** (optional) : Orientation  `horizontal` or `vertical` (default: `vertical`)
 - **items**: A list of [items](#items)
-
+- **application_title** (optional) : A way to put a custom title to the window, i added this for further customization with my Destkop Manager (see [issues](#issues) for more detail) (default: `oscar`)
 
 ```json
 {
@@ -61,7 +61,19 @@ Create a new configuration file `:name.json` into `~/.config/oscar`.
 ```
 
 ## items
-For now there is only two types of items, `output` or `button` (default)
+
+### Runner
+Runner allow you to run a command manually
+- **type** : `runner`
+- **label** (optional) : Label on top of the input
+- **class_name** (optional) : Name of a CSS class for stylingwindow
+```json
+{
+    "type": "runner",
+    "label": "Run a command",
+    "class_name": "runner"
+}
+```
 
 ### Button
 Button is the more usefull one
@@ -114,7 +126,17 @@ The name of the configuration is also added to `.window` as such `.window.defaul
  |_ .header
  |_ .box
     |_ .item
-        |_ .button | .output
 ```
 
 To create a new theme, create a new file in `~/.config/oscar/themes/:theme_name/style.css`.
+
+
+## Issues
+
+Depending on your Desktop Manager, it might not open in a floating window.
+
+In my `hyprland` configuration i had to add rules to target the title of the window like this:
+```
+windowrulev2 = float, title:oscar
+windowrulev2 = stayfocused, title:oscar
+```
