@@ -1,4 +1,4 @@
-# Oscar - A versatile launcher
+# Oscar - One Simple Configurable Action Runner
 Oscar is a simple and configurable launcher that allows you to quickly execute commands, launch applications, or display the output of Bash scripts. 
 
 It's designed to be flexible, easy to configure, yet simple enough making it perfect for those who love to customize their workflow.
@@ -125,8 +125,8 @@ Group other items together
 - **orientation** (optional) : Orientation  `horizontal` or `vertical` (default: `horizontal`)
 ```json
 {
-    "type": "separator",
-    "class_name": "separator",
+    "type": "group",
+    "class_name": "group",
     "items": [],
     "orientation": "horizontal"
 }
