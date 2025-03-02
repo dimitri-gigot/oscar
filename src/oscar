@@ -108,6 +108,7 @@ if len(items) == 0:
 app = Gtk.Application(application_id='be.dim-dim.oscar.'+name)
 win = None  
 timeouts = []
+shortcuts = []
 
 class ThreadJob(threading.Thread):
     def __init__(self,callback,event,interval):
@@ -160,6 +161,21 @@ def get_command(action):
     return command
 
 
+def on_key_press(keyval, keycode, state, user_data, win):   
+    if keycode == 65307:
+        force_quit()
+
+    for shortcut in shortcuts:
+        if 'shortcut' in shortcut:
+            o = ord(shortcut['shortcut'])
+            if o == keycode:
+                command = get_command(shortcut)
+                if len(command) > 0:
+                    subprocess.Popen(command)
+                force_quit()
+
+
+
 def create_runner(action):
     box = Gtk.Box()
     box.set_orientation(Gtk.Orientation.VERTICAL)
@@ -186,8 +202,6 @@ def create_runner(action):
     input.connect('activate', trigger_action)
 
     return box
-
-
 
 def create_button(action):
     title = ''
@@ -236,24 +250,68 @@ def create_output(action):
 
     return item
 
-def on_key_press(keyval, keycode, state, user_data, win):
-    print('key pressed: ',keycode)
-    
-    if keycode == 65307:
-        force_quit()
+def create_separator(action):
+    separator = Gtk.Separator()
+    separator.add_css_class('separator')
+    return separator
 
+def create_group(action, keycont):
+    box = Gtk.Box()
+    box.add_css_class('group')
+
+    if 'orientation' in action and action['orientation'] == 'vertical':
+        box.set_orientation(Gtk.Orientation.VERTICAL)
+        box.add_css_class('vertical')
+    else:
+        box.set_orientation(Gtk.Orientation.HORIZONTAL)
+        box.add_css_class('horizontal')
+
+    if 'label' in action:
+        title = action['label']
+        label = Gtk.Label(label=title)
+        label.add_css_class('group_label')
+        box.append(label)
+
+    loop_through_items(action['items'], keycont, box)
+    return box
+
+
+def loop_through_items(items, keycont, box):
+    # add buttons for each action
     for item in items:
-        if 'shortcut' in item:
-            o = ord(item['shortcut'])
-            print('o', o)
-            if o == keycode:
-                command = get_command(item)
-                if len(command) > 0:
-                    subprocess.Popen(command)
-                force_quit()
+        if 'disabled' in item and item['disabled'] == True:
+            continue
 
+        if "shortcut" in item and "command" in item:
+            global shortcuts
 
+            exist = False
+            for s in shortcuts:
+                if s["shortcut"] == item["shortcut"]:
+                    exist = True
+            if not exist:
+                shortcuts.append({
+                    "shortcut": item["shortcut"],
+                    "command": item["command"]
+                })
 
+        if 'type' in item and item['type'] == 'group':
+            _item = create_group(item, keycont)
+        elif 'type' in item and item['type'] == 'separator':
+            _item = create_separator(item)
+        elif 'type' in item and item['type'] == 'runner':
+            _item = create_runner(item)
+        elif 'type' in item and item['type'] == 'output':
+            _item = create_output(item)
+        else:
+            _item = create_button(item)
+
+        if _item is not None:
+            _item.add_controller(keycont)
+            _item.add_css_class('item')
+            if 'class_name' in item:
+                _item.add_css_class(item['class_name'])
+            box.append(_item)
 
 def on_activate(app):
     global win
@@ -262,7 +320,6 @@ def on_activate(app):
     win.add_css_class('window_'+name)
     win.add_css_class('window')
 
-     # new part
     keycont = Gtk.EventControllerKey()
     keycont.connect('key-pressed', on_key_press, win)
     win.add_controller(keycont)
@@ -283,24 +340,7 @@ def on_activate(app):
         box.append(header)
 
     
-    # add buttons for each action
-    for item in items:
-        if 'disabled' in item and item['disabled'] == True:
-            continue
-
-        if 'type' in item and item['type'] == 'runner':
-            _item = create_runner(item)
-        elif 'type' in item and item['type'] == 'output':
-            _item = create_output(item)
-        else:
-            _item = create_button(item)
-
-        if _item is not None:
-            _item.add_controller(keycont)
-            _item.add_css_class('item')
-            if 'class_name' in item:
-                _item.add_css_class(item['class_name'])
-            box.append(_item)
+    loop_through_items(items, keycont, box)
     
 
     win.set_child(box)

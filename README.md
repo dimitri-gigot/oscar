@@ -114,6 +114,38 @@ For example, this show the time and it run every second.
 }
 ```
 
+
+
+### Group
+Group other items together
+
+- **type** : `group`
+- **class_name** (optional) : Name of a CSS class for styling
+- **items**: A list of [items](#items)
+- **orientation** (optional) : Orientation  `horizontal` or `vertical` (default: `horizontal`)
+```json
+{
+    "type": "separator",
+    "class_name": "separator",
+    "items": [],
+    "orientation": "horizontal
+}
+```
+
+
+### Separator
+Display a separator line
+
+- **type** : `separator`
+- **class_name** (optional) : Name of a CSS class for styling
+
+```json
+{
+    "type": "separator",
+    "class_name": "separator"
+}
+```
+
 ## Theme
 You can use CSS to theme `oscar`
 
