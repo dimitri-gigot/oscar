@@ -38,7 +38,7 @@ if len(arguments) > 0:
 app_title = 'oscar'
 header_title = None
 theme = 'default'
-timeout = 0
+timeout = 5*60
 width = 300
 height = 0
 has_theme = True
@@ -159,6 +159,36 @@ def get_command(action):
     command = [c.replace('OSCAR', oscar_full_path) for c in command]
     return command
 
+
+def create_runner(action):
+    box = Gtk.Box()
+    box.set_orientation(Gtk.Orientation.VERTICAL)
+    box.add_css_class('box')
+
+    if 'label' in action:
+        title = action['label']
+        label = Gtk.Label(label=title)
+        label.add_css_class('runner_label')
+        box.append(label)
+
+    input = Gtk.Entry()
+    input.set_text('')
+    input.add_css_class('input')
+
+    box.append(input)
+
+    def trigger_action(a):
+        command = input.get_text()
+        if command != '':
+            subprocess.Popen(command, shell=True)
+        force_quit()
+
+    input.connect('activate', trigger_action)
+
+    return box
+
+
+
 def create_button(action):
     title = ''
 
@@ -258,7 +288,9 @@ def on_activate(app):
         if 'disabled' in item and item['disabled'] == True:
             continue
 
-        if 'type' in item and item['type'] == 'output':
+        if 'type' in item and item['type'] == 'runner':
+            _item = create_runner(item)
+        elif 'type' in item and item['type'] == 'output':
             _item = create_output(item)
         else:
             _item = create_button(item)
