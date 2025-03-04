@@ -344,7 +344,8 @@ def on_activate(app):
     
 
     win.set_child(box)
-
+    win.set_modal(True)
+    win.set_transient_for(None)
 
     if has_theme:
         # Apply the CSS to the default screen
