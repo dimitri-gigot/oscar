@@ -1,39 +1,26 @@
 {
     "width": 400,
+    "theme": "default",
     "items": [
         {
             "label": "clock",
             "type": "output",
             "class_name": "clock",
             "interval": 1,
-            "command": "echo $(date '+%H:%M:%S')"
+            "shell": true,
+            "command": "date '+%H:%M:%S'"
         },
         {
-            "label": "Run",
             "type": "runner",
             "class_name": "runner"
         },
         {
-            "label": "Terminal",
-            "shortcut": "t",
-            "command": "kitty"
-        },
-        {
-            "label": "File Manager",
-            "shortcut": "t",
-            "command": "thunar"
-        },
-        {
-            "label": "Firefox",
-            "shortcut": "f",
-            "class_name": "firefox",
-            "command": "oscar firefox"
-        },
-        {
+            "type": "button",
             "label": "About",
-            "shortcut": "a",
-            "class_name": "about",
             "command": "oscar about"
+        },
+        {
+            "type": "separator"
         },
         {
             "label": "Quit",

@@ -1,7 +1,6 @@
 {
-    "title": "About",
     "width": 400,
-    "height": 100,
+    "theme": "default",
     "items": [
 
         {

@@ -1,149 +1,85 @@
+
 :root{
-    --background: #30343f;
-    --background2: #373b47;
-    --foreground: #d3dae3;
-    --quit: #d3dae399;
-    --highlight: #4fc872;
-    --highlight-opacity: #4fc87220;
+    --background: #282a36;
+    --background2: #ffffff05;
+    --foreground: #f8f8f2;
+    --highlight: #b7bdf8;
+    --highlight2: #a6da95;
 }
 
 *{
-    margin: 0;
+    all: unset;
     padding: 0;
-    font-family: "Fira Code" ;
-	font-size: 12px;
-    border: 0;
-    border-radius: 0;
-    line-height: 1;
-    outline: none;
-    box-shadow: none;
-    border: 0;
+    margin: 0;
 }
 
-*:focus{
-    outline: none;
-}
-
-.box {
+.main{
+    font-family: 'Hack Nerd Font', monospace;
     background: var(--background);
+    padding: 15px;
+    color: var(--foreground);
 }
 
-.header{
-    padding: 20px;
-    font-size: 20px;
+.main>.widget{
+    margin: 5px 0;
+}
+
+.widget__group>.widget{
+    margin-left: 5px;
+}
+
+.widget__group>.widget:first-child{
+    margin-left: 0px;
+}
+
+.widget__output{
+    padding: 0;
+}
+
+.widget__separator{
+    border-bottom: 1px solid var(--highlight2);
+    margin: 10px 0;
+}
+
+.widget__runner{
+    background: var(--background2);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--background2);
+}
+.widget__runner:focus
+.widget__runner:focus,
+.widget__runner:active{
+    border: 1px solid var(--highlight);
+}
+
+.widget__button{
     background: var(--background);
-    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--background2);
 }
 
-.item{
+.main:hover .widget__button:focus{
     background: var(--background);
     color: var(--foreground);
-    margin: 0px;
-    padding: 10px;
-    border-left: 10px solid var(--background);
-    border-right: 10px solid var(--background);
-
 }
 
-.output{
-    background: var(--background);
-    padding: 0;
-    margin: 0;
+.widget__button:focus{
+    background: var(--highlight2);
+    color: var(--background);
 }
-/*
- * Custom OUTPUT type
+
+.main:hover .widget__button:hover{
+    background: var(--highlight);
+    color: var(--background);
+}
+
+/* 
+ * CUSTOM CLASSES
  */
 
 .clock{
-    color: var(--highlight);
-    font-weight: bold;
-    font-size: 30px;
-    padding: 20px;
-    margin-top: 20px;
-}
-
-/*
- * SEPARATOR
- */
-.separator{
-    background: var(--highlight);
-    padding: 0px;
-}
-.horizontal .separator{
-    margin: 20px 0px;
-}
-.vertical .separator{
-    margin: 0px 20px;
-}
-
-/*
- * GROUP
- */
-.group{
-    padding: 5px;   
-    margin: 10px;
-    border: 1px solid var(--background2);
-    border-radius: 5px;
-}
-
-/*
- * RUNNER
- */
-.runner_label{
-    color: var(--highlight);
-    padding: 10px;
-    margin: 10px;
-}
-
-.input{
-    background: var(--background2);
-    color: var(--foreground);
-    padding: 10px;
-    border-left: 10px solid var(--highlight-opacity);
-    border-right: 10px solid var(--highlight-opacity);
-    outline: none;
-    border-radius: 5px;
-
-}
-
-.input:focus,
-.input:active{
-    border-left: 10px solid var(--highlight);
-    border-right: 10px solid var(--highlight);  
-}
-
-/*
- * BUTTONS
- */
-.button{
-    border-radius: 5px;
-    margin: 0px 20px;
-}
-
-.button:focus{
-    border-left: 10px solid var(--highlight);
-    border-right: 10px solid var(--highlight);
-    background: var(--highlight-opacity);
-}
-
-.button:hover{
-    background: var(--highlight);
-    color: var(--background);
-    border-left: 10px solid var(--highlight);
-    border-right: 10px solid var(--highlight);
-}
-
-/*
- * QUIT BUTTON
- */
-.button.quit{
-    background: var(--background);
-    color: var(--quit);
-    font-size: 10px;
-    margin: 10px 20px;
-}
-.button.quit:focus,
-.button.quit:hover{
-    background: var(--background);
-    color: var(--highlight);
+    font-size: 50px;
+    color: var(--highlight2);
 }

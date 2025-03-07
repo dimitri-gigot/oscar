@@ -6,7 +6,7 @@ It's designed to be flexible, easy to configure, yet simple enough making it per
 ## Why
 I always struggled to configure Rofi (and similar other) to my liking, it felt way too complicated.
 
-I also wanted to try to develop in Python and to play with GTK4.
+I also wanted to try to play with GTK4.
 
 I now use `oscar` for everything, i removed my status bar and rofi.
 
@@ -18,7 +18,7 @@ This is what my desktop look like (Oh and meet my cat ... `oscar`)
 ## Installation
 There is no installation script yet, for now, you can just copy the script and make it executable.
 
-Don't forget to install Python3 and GTK4.
+Don't forget to install `gjs` and `GTK4`.
 
 ```bash
 copy ./src/oscar /usr/local/bin
@@ -39,15 +39,11 @@ Simply run `oscar` to open the default configuration, or run `oscar :name:` to o
 ## Configuration
 Create a new configuration file `:name.json` into `~/.config/oscar`.
 
-- **title** (optional) : Name displayed in the "header" (default: empty , no header displayed)
-- **width** (optional) : Width of the window (default: `300`)
+- **width** (optional) : Width of the window (default: `400`)
 - **height** (optional) : Height (minimum) of the window (default: `0`)
 - **timeout** (optional) : Close the window after some time (in seconds, default: `0` ... will not close automaticly)
 - **theme** (optional) : Choose a theme for the window, (default: `default`)
-- **orientation** (optional) : Orientation  `horizontal` or `vertical` (default: `vertical`)
 - **items**: A list of [items](#items)
-- **application_title** (optional) : A way to put a custom title to the window, i added this for further customization with my Destkop Manager (see [issues](#issues) for more detail) (default: `oscar`)
-
 ```json
 {
     "title": "Title",
@@ -55,7 +51,6 @@ Create a new configuration file `:name.json` into `~/.config/oscar`.
     "height": 0,
     "timeout": 0,
     "theme": "default",
-    "orientation": "vertical",
     "items": []
 }
 ```
@@ -76,7 +71,7 @@ Runner allow you to run a command manually
 ```
 
 ### Button
-Button is the more usefull one
+Button is the more useful one
 - **type** (optional) : default `button`
 - **label** (optional) : Label of the button
 - **shortcut** (optional) : One character you can use as a shortcut once the window is open
@@ -94,9 +89,9 @@ Button is the more usefull one
 
 
 ### Output
-Output is usefull if you want to display information.
+Output is useful if you want to display information.
 
-For example, this show the time and it run every second.
+For example, this shows the time and it runs every second.
 
 - **type** : `output`
 - **label** (optional) : Label, it will be replace by the output of the command
@@ -110,7 +105,7 @@ For example, this show the time and it run every second.
     "label": "Clock",
     "class_name": "clock",
     "interval": 1,
-    "command": "echo $(date '+%H:%M:%S')"
+    "command": "date '+%H:%M:%S'"
 }
 ```
 
@@ -127,7 +122,9 @@ Group other items together
 {
     "type": "group",
     "class_name": "group",
-    "items": [],
+    "items": [
+        //list of items
+    ],
     "orientation": "horizontal"
 }
 ```
@@ -151,13 +148,9 @@ You can use CSS to theme `oscar`
 
 Every component has a specific class_name by default, the class_name you defined in the configuration is added.
 
-The name of the configuration is also added to `.window` as such `.window.default` for the default configuration.
-
 ```
- _ .window
- |_ .header
- |_ .box
-    |_ .item
+ _ .main
+ |_ .widget .widget__{{type}} .{{class_name}}
 ```
 
 To create a new theme, create a new file in `~/.config/oscar/themes/:theme_name/style.css`.
@@ -166,9 +159,4 @@ To create a new theme, create a new file in `~/.config/oscar/themes/:theme_name/
 ## Issues
 
 Depending on your Desktop Manager, it might not open in a floating window.
-
-In my `hyprland` configuration i had to add rules to target the title of the window like this:
-```
-windowrulev2 = float, title:oscar
-windowrulev2 = stayfocused, title:oscar
-```
+You might want to add rule for that.
