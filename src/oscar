@@ -54,7 +54,11 @@ function getConfig(name){
     // check if file exist
     let configPath = CONFIG_FOLDER_PATH + name + '.json'
     if (!GLib.file_test(configPath, GLib.FileTest.EXISTS)){
-        console.error('Config file not found @', configPath)
+        configPath = '/etc/oscar/'+name+'.json'
+    }
+
+    if (!GLib.file_test(configPath, GLib.FileTest.EXISTS)){
+        console.error('Config file not found for name:', name)
         // kill the process
         System.exit(1)
     }
@@ -72,9 +76,13 @@ function getConfig(name){
 
 function applyTheme(theme){
     if(!theme) return
-    const cssPath = CONFIG_FOLDER_PATH+'themes/'+theme+'/style.css'
+    let cssPath = CONFIG_FOLDER_PATH+'themes/'+theme+'/style.css'
     if (!GLib.file_test(cssPath, GLib.FileTest.EXISTS)){
-        console.error('Theme not found @', cssPath)
+        cssPath = '/etc/oscar/themes/'+theme+'/style.css'
+    }
+
+    if (!GLib.file_test(cssPath, GLib.FileTest.EXISTS)){
+        console.error('Theme not found for theme:', theme)
         return
     }
     
